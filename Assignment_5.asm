@@ -19,49 +19,75 @@ include Irvine32.inc
 enter_string BYTE "Please enter a number: ", 0	
 display_result_string BYTE "Primes found until the given number: ", 0
 
-;create three variables 
-count DWORD  ?	;counter variable
-input DWORD	 ?  ;keep user input
+;create variables 
+input DWORD	 ?			;keep user input
+count DWORD  2			;hold eax, the input
+keep_eax   DWORD  ?     ;keep eax 
 .code
 main proc
 	mov edx, offset enter_string	;move string to edx
 	call writeString				;cout string
 
 	call readDec					;input number, store in eax
+
+	mov keep_eax, eax 
+	inc count 
+	mov eax, count 
+	call writeDec
+	call isPrime					;call isPrime proceture
+									;the resule store in ebx
+									;1 if prime, 0 if not
 	
-	mov input, eax					;
-	mov count, 2					;set count equal 2 
+	mov eax, keep_eax				;put input back to eax
+
+	;this while loop print the numbers <= the input that are prime
+	while2:								;check count and input
+		cmp count, eax					;compare count and input
+		ja outwhile2					;jump out if count above input
+		cmp ebx, 1
+		jne else1
+		mov eax, ecx 
+		call writeDec
+		inc ecx						;increate count
+
+		jmp while2
+	outwhile2:
+
+
+	else1:
 
 
 
 	exit
 main endp
 
-
-	isPrime PROC
-	mov ecx, eax					;set loop counter
-	add ecx, 1						;increate by 1. Start the loop from 2.
-
-	mov counter, 2					;set 2 to counter
+isPrime PROC
+	mov ebx, eax			;hold count  
+	mov ecx, 2				;hold temp
 
 	while1:
-		cmp ecx, eax
-		JNE 
+		cmp ecx, ebx
+		jae outwhile1
+	
+		mov eax, ebx
+		xor edx, edx		;make edx 0
+		div	ecx				;edx:eax/ecx
+		cmp edx, 0
+		jz notPrime			;jump out when 0
+		inc ecx				;increate temp
+		jmp while1			;jump back to the top
+	outwhile1:
+		mov ebx, 1			;make ebx 1 if prime
+		jmp out1
+	notPrime:
+		mov ebx, 0			;make ebx 0 if not prime 
+	out1:
 
-		cmp ecx, 2 
-		JNE else1:
-		cmp ecx, 3 
 
 
 
-		else1:
-			
-
-
-
-
-		ret 
-	isPrime ENDP
+	ret 
+isPrime ENDP
 
 
 
@@ -79,3 +105,6 @@ Primes found until the given number:
 
 2 3 5 7 11 13 17 19 23 29 31 Press any key to continue . . .
 !
+
+
+
