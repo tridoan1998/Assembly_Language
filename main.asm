@@ -1,142 +1,126 @@
 comment !
-03/15/2018
-Asks the user to enter a number. Assume that the user 
-enters an unsigned integer that is between 1 -10.
-Displays the first five multiples of the number 
-and save them into an array called arr1.
-Askes the user again to enter a number. 
-Assume that the user enters an unsigned 
-integer that is between       1 - 10.
-Displays the first five multiples of 
-the number and save them into an array called arr2.
-Merges the two arrays into one array 
-called arr3. Save the numbers in ascending order.
-Displays arr3
+03/22/2018
+Write a program that builds a two-dimensional array using 
+the inputs from the userand finds the sum of a selected row.
+Your program must do the following:
+Ask the user to enter how many elements the array has. The maxSize is 40.
+Ask the user to enter how many elements in each row in the array.
+Ask the user what type the array is. It could be a byte, word or dword array.
+Ask the user to enter the elements of the array.
+Ask the user for the row index and display the sum of the selected row.
+Your program must have a procedure called calcRowSum PROC that 
+calculates the sum of one row 
+in the two-dimensional array of bytes, words, 
+or doublewords and returns it to main proc.
+The header of the proc in C++ is as follows:
+int calcRowSum ( int *array, int rowSize, int type, int rowIndex);
+For the parameters and the return value use the stack.
 !
+
 INCLUDE Irvine32.inc
 
 .data
-;create 4 strings to display and 3 arrays to hold datas  
-string1 byte "Enter a number in the range 1 - 10: ", 0
-string2 byte "The multiples of your number are: ", 0
-string3 byte "The new array after merging the two arrays: ", 0
-comma byte ", ", 0
+;create strings
+string0 BYTE "The element must be from 1 to 40", 0
 
-array1 dword 5 DUP (?)
-array2 dword 5 DUP (?)
-array3 dword 5 DUP (?)
+string1 BYTE "Enter how many elements in your array: ", 0
+string2 BYTE "Enter the row size: ", 0
+string3 BYTE "Enter the type of your array.", 0
+string4 BYTE " 1 for byte.", 0
+string5 BYTE " 2 for word.", 0
+string6 BYTE " 4 for doubleword.", 0
+string7 BYTE "Enter an element in your array, ", 0
+string8 BYTE "Enter row number that you want me to sum: ", 0
+string9 BYTE "The sum is: ", 0
+
+;create avaiables
+
+Array 
+
+ArrayElement dword  ?			;keep how many elements from user input 
+ArrayRow     dword  ?			;keep how many row from user input
+ArrayType    dword  ?			;keep what type	from user input
 
 
-.code
+.code	
 main proc
 
-	mov edx, offset string1			; move string1 to edx 
-	call writeString				;display string1 
-	call readDec					;read in unsigned integer
-
-	push offset array1				; move address of array1 into stack
-	push offset array2				;move address of array2 into stack 
-	push offset array3				; move address of array3 into stack
-	call createArr					;call proceture
-
-
-	call Crlf						;go own one line
-	mov edx, offset string1			; move string1 to edx 
-	call writeString				;display string1 
-	call readDec					;read in unsigned integer
-
-	call createArr					;call proceture
-	call Crlf						;go own one line
-
-	mov edx, offset string3			;set string
-	call writeString				;show string
-
-	shl eax, 0						;shift left 0 meaning 2^0
-	call writeDec					;show the result 
-	mov edx, offset comma			;set string 
-	call writeString				;output string
-
-	shl eax, 1						;shift left 0 meaning 2^1
-	call writeDec					;show result 
-	mov edx, offset comma			;set string
-	call writeString				;show string
-
-
+;make an if else loop to check if maxSize is >= 40
+mov edx, offset string1				;move affress string1 into edx
+call writeString					;call string1
+call readInt						;read input (keep how many elements)
+mov ArrayElement, eax				;put input into ArrayElement
+cmp eax, 1							;compare eax with 1
+jb else1							;jump if below to else1 
+cmp eax, 40							;compare input with 40
+ja else1							;jump to else1 if above 40
+	jmp out1						;jump to otu1 if below or equal 40
+else1:								;else1 label
+	mov edx, offset string0			;move address string0 into edx 
+	call writeString				;call string0
 	call Crlf						;go down one line
+	exit							;exit the program
+out1:								;within out1 we will make the program
+	mov edx, offset string2				;move address string3 into edx
+	call writeString					;call string
+	call readInt						;read in input
+	mov ArrayRow, eax					;move ArrayRow = eax
+	mov edx, offset string3				;move address string3 to edx
+	call writeString					;call string
+	call Crlf							;go down one line
+	mov edx, offset string4				;move address string4 to edx
+	call writeString					;call string
+	call Crlf							;go down one line
+	mov edx, offset string5				;move address string5 to edx
+	call writeString					;call string
+	call Crlf							;go down one line
+	mov ArrayType, eax					;move ArrayType = eax
+	mov edx, offset string6				;move address string6 to edx
+	call writeString					;call string
+	call Crlf							;go down one line
+
+mov ecx, ArrayElement
+l1: 
+	string7
+	Loop l1
+
 exit
 main endp
-
-
-
-;this proc promt the user to enter input and create an array holding 
-;the value and five others number that multiple by the first 
-createArr PROC
-	push ebp			; push ebp into the stack
-	mov ebp, esp		; make ebp point at wheere esp point at 
-	push eax			;push eax value into the stack
-	push ebx			;pish ebx value into the stack	
-	mov eax, [ebp-4]	;make eax = the value that ebp-4 point at
-	mov ebx, eax		;ebx = eax
-	shl eax, 0			;shift left 0 meaning 2^0
-	call writeDec		;show the result 
-	mov edx, offset comma	;set string 
-	call writeString		;output string
-
-
-	mov eax, [ebp-4]			;make eax = the value that ebp-4 point at
-	mov ebx, eax				;ebx = eax
-	shl eax, 1					;shift left 0 meaning 2^1
-	call writeDec				;show result 
-	mov edx, offset comma		;set string
-	call writeString			;show string
-
-	mov eax, [ebp-4]			;make eax = the value that ebp-4 point at
-	mov ebx, eax				;ebx = eax
-	shl eax, 0					;shift left 0 meaning 2^0
-	shl ebx, 1					;shift left 1 meaning 2^1
-	add eax, ebx				;eax += ebx
-	call writeDec				;show result 
-	mov edx, offset comma		;set string
-	call writeString			;show string	
-
-
-	mov eax, [ebp-4]			;make eax = the value that ebp-4 point at
-	mov ebx, eax				;ebx = eax
-	shl eax, 2					;shift left 2 meaning 2^2
-	call writeDec				;show result 
-	mov edx, offset comma		;set string
-	call writeString			;show string
-
-
-	mov eax, [ebp-4]	;make eax = the value that ebp-4 point at
-	mov ebx, eax		;ebx = eax
-	shl eax, 2			;shift left 2 meaning 2^2
-	shl ebx, 0			;shift left 0 meaning 2^0
-	add eax, ebx		;eax += ebx
-	call writeDec		;show result
-
-	
-	mov eax, [ebp-4]	;make eax = the value that ebp-4 point at
-	pop ebx				;pop ebx back out of the stack
-	pop eax				;pop eax back out of the stack
-	pop ebp             ;pop ebp back out of the stack
-	ret 
-createArr ENDP
-
 end main
 
+;calculates the sum of one row in the two-dimensional array of bytes, words,
+;or doublewords and returns it to main proc.
+;int calcRowSum ( int *array, int rowSize, int type, int rowIndex);
+;For the parameters and the return value use the stack.
+calcRowSum PROC
+
+
+	ret 
+calcRowSum endp 
 
 
 
-comment!
+comment !
+sample run:
 
-
-Sample run:
-
-Enter a number in the range 1 - 10: 2
-2, 4, 6, 8, 10
-Enter a number in the range 1 - 10: 3
-3, 6, 9, 12, 15
-The new array after merging the two arrays: 3, 6,
+Enter how many elements in your array: 6
+Enter the row size: 2
+Enter the type of your array.
+ 1 for byte.
+ 2 for word.
+ 4 for doubleword.
+1
+Enter an element in your array, 1
+Enter an element in your array, 2
+Enter an element in your array, 3
+Enter an element in your array, 4
+Enter an element in your array, 5
+Enter an element in your array, 6
+Enter row number that you want me to sum: 0
+The sum is: 00000003
 Press any key to continue . . .
+
+
+
+
 !
