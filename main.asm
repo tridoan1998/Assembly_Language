@@ -40,6 +40,12 @@ arrayB byte maxElement dup (0)
 arrayW word maxElement dup(0)
 arrayD dword maxElement dup(0)
 
+
+
+
+
+
+
 ;create variables to keep user input
 ArrayElement dword  ?			;keep how many elements from user input 
 ArrayRow     dword  ?			;keep how many row from user input
@@ -49,7 +55,7 @@ ArrayRowIndex	dword ?			;keep row index
 
 .code	
 main proc
-
+sub esp, 4
 ;make an if else loop to check if maxSize is >= 40
 mov edx, offset string1				;move affress string1 into edx
 call writeString					;call string1
@@ -105,10 +111,22 @@ out1:								;within out1 we will make the program
 			mov [esi], eax				;move element into where esi point at
 			add esi, TYPE arrayB		;move to the next array element
 			Loop l1
+
+
+		mov ecx, ArrayElement
+		mov esi, offset arrayB
+		l4:
+			movzx eax, BYTE ptr [esi]
+			call writeDec
+			add esi, TYPE arrayB
+			call Crlf
+			Loop l4
+			
+		push offset arrayB				;make esi points to arrayB
 		jmp out2
 	case2:
 			mov ecx, ArrayElement			;loop counter
-		mov esi, offset arrayW			;make esi points to arrayB
+		mov esi, offset arrayW				;make esi points to arrayB
 		;the loop uses to input elements for array
 		l2:
 			mov edx, offset string7		;put string7 into edx
@@ -117,6 +135,7 @@ out1:								;within out1 we will make the program
 			mov [esi], eax				;move element into where esi point at
 			add esi, TYPE arrayW		;move to the next array element
 			Loop l2
+			push offset arrayW			;make esi point to arrayW
 		jmp out2
 	case3:
 			mov ecx, ArrayElement			;loop counter
@@ -129,6 +148,7 @@ out1:								;within out1 we will make the program
 			mov [esi], eax				;move element into where esi point at
 			add esi, TYPE arrayD		;move to the next array element
 			Loop l3
+			push offset arrayD			;make esi points to arrayD
 		jmp out2
 else2:									;else2 label
 	mov edx, offset string10			;move string10 to edx
@@ -137,15 +157,22 @@ else2:									;else2 label
 	exit								;exit
 out2:									;out2 label
 
-
 mov edx, offset string8				;set string to edx
 call writeString					;call string
 call readInt						;read user input
 mov ArrayRowIndex, eax				;keep input in ArrayRowIndex
+
+push ArrayRow						;push into stack
+push ArrayType						;push into stack
+push ArrayRowIndex					;push i
+
+
+
 mov eax, ArrayElement				;move ArrayElement to eax
 mov ebx, ArrayRow					;move ArrayRow to ebx
 mov ecx, ArrayType					;move ArrayType to ecx
 mov edx, ArrayRowIndex				;move ArrayRowIndex to edx
+
 call calcRowSum						;call procesure
 
 
@@ -160,8 +187,21 @@ main endp
 ;int calcRowSum ( int *array, int rowSize, int type, int rowIndex);
 ;For the parameters and the return value use the stack.
 calcRowSum PROC
+	push ebp 
+	mov ebp, esp
+	push eax
+	push ebx
+	push ecx
+	push edx
+	push esi
+	push edi
 
 
+
+
+
+
+	ret 
 calcRowSum ENDP 
 
 
