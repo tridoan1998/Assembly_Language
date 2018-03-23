@@ -161,6 +161,7 @@ push ArrayRowIndex
 push ArrayType
 push ArrayRow
 call calcRowSum
+pop ebx
 pop eax
 call writeHex
 
