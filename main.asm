@@ -40,18 +40,11 @@ arrayB byte maxElement dup (0)
 arrayW word maxElement dup(0)
 arrayD dword maxElement dup(0)
 
-
-
-
-
-
-
 ;create variables to keep user input
 ArrayElement	 dword  ?			;keep how many elements from user input 
 ArrayRow		 dword  ?			;keep how many row from user input
 ArrayType		 dword  ?			;keep what type	from user input
 ArrayRowIndex	 dword  ?			;keep row index
-
 
 .code	
 main proc
@@ -61,17 +54,65 @@ call writeString					;call string1
 call readDec						;read input (keep how many elements)
 mov ArrayElement, eax				;put input into ArrayElement
 
-
 ;--------------------------------------------------------------
+comment !
+CODE IN C++
+cout << "Enter how many elements in your array: ";
+cin >> ArrayElement
+if(ArrayElement > 40 || ArrayElement < 0)
+	cout << "The element must be from 1 to 40";
+	exit(-1);
+else
+	{
+		cout <<  "Enter the row size: ";
+		cin >> ArrayRow;
+		cout << "Enter the type of your array.\n 1, 2 or 4"
+		cin >> ArrayType;
+		switch(ArrayType)
+		{
+			case 1:
+				{
+					int *p;
+					p = arrayB;
+					for ( int i = 0; i < ArrayElement; i++ ) 
+					{
+						cout << "Enter an element in your array: ";
+						cin >> *(p + i);
+					}
+				}
+			case 2:
+				{
+					int *p;
+					p = arrayW;
+					for ( int i = 0; i < ArrayElement; i++ ) 
+					{
+						cout << "Enter an element in your array: ";
+						cin >> *(p + i);
+					}
+				
+				}
+			case 4:
+				{
+					int *p;
+					p = arrayD;
+					for ( int i = 0; i < ArrayElement; i++ ) 
+					{
+						cout << "Enter an element in your array: ";
+						cin >> *(p + i);
+					}
+				}
+		}		//switch bracket
+	}			//else bracket
+	cout << "Enter row number that you want me to sum: ";
+	cin >> ArrayRowIndex;
+	int calcRowSum ( int *array, int rowSize, int type, int rowIndex)
+	{
+	....................
+	}
 
-
-
-
+}//if, else bracket
+!
 ;----------------------------------------------------------
-
-
-
-
 
 cmp eax, 1							;compare eax with 1
 jb else1							;jump if below to else1 
@@ -166,9 +207,7 @@ call writeString					;call string
 call readInt						;read user input
 mov ArrayRowIndex, eax				;keep input in ArrayRowIndex
 
-
-
-
+;first we push all parameters required into the stack
 push ArrayRowIndex				;push rowindex in the stack
 push ArrayType					;push value arraytype in the stack
 push ArrayRow					;push value arrayrow in the stack
@@ -177,17 +216,8 @@ call calcRowSum					;call the function
 pop eax							;pop value in stack to eax
 mov edx, offset string9			;set string9 to edx
 call writeString				;call string
-call writeHex					;call eax 
+call writeHex					;call eax, the result 
 call Crlf						;go down one line
-
-
-
-
-
-
-
-
-
 
 exit
 main endp
@@ -202,17 +232,15 @@ main endp
 ;ECX = row size, in bytes. 
 ;Returns: EAX holds the sum 
 ;----------------------------------------------------------------------------
-
 calcRowSum PROC
-	push ebp 
-	mov ebp, esp
-	push eax
-	push ebx
-	push ecx
-	push edx
-	push esi
-	push edi
-
+	push ebp				;push ebp into stack
+	mov ebp, esp			;make ebp point to where esp point at
+	push eax				;push eax into the stack
+	push ebx				;push ebx into the stack
+	push ecx				;push ecx into the stack
+	push edx				;push edx into the stack
+	push esi				;push esi into the stack
+	push edi				;push edi into the stack
 
 	mov eax, [ebp+8]		;hold array row
 	mov ecx, [ebp+12]		;hold array type
@@ -223,30 +251,45 @@ calcRowSum PROC
 	mov ecx, [ebp+16]		;point ecx to rowindex
 
 	mul ecx					;multiplication of eax and rowarray, store in eax
-
 	
 	mov ebx, [ebp+20]		;ebx keep value inside ebp+20 
 	add ebx, eax			;row offset
 	mov eax, 0				;accumulator
 	mov esi, 0				;column index
 
-	mov edi, [ebp+12]
-	cmp edi, 1
-	je case1
-	cmp edi, 2 
-	je case2
-	cmp edi, 4
-	je case3
-	jmp out1
+	mov edi, [ebp+12]		;make edi point to the type of array
+	cmp edi, 1				;compare edi with 1 
+	je case1				;jump to case1 label if equal to 1 
+	cmp edi, 2				;compare edi with 2
+	je case2				;jump to case2 label if equal to 2
+	cmp edi, 4				;compare edi with 4
+	je case3				;jump to case3 if equal to 4
+	jmp out1				;jump to out1 label
 	case1:
-		mov ecx, [ebp+8]
+		mov ecx, [ebp+8]	;set loop counter
+		comment!
+		for(int i = 0; i<= ecx; i++)
+		{
+			edx = [ebx+esi];
+			eax += edx;
+			esi++;
+		}
+		!
 		L11:
-			movzx edx, BYTE PTR [ebx + esi] 
-			add eax, edx
-			inc esi
-			loop L11
+			movzx edx, BYTE PTR [ebx + esi] ;set edx = variable in array
+			add eax, edx		;add variable in array to eax
+			inc esi				;increate esi by array's size
+			loop L11			;loop set up
 			mov [ebp+24], eax	;set eax to where ebp point at
 			jmp out1
+			comment!
+		for(int i = 0; i<= ecx; i++)
+		{
+			edx = [ebx+esi];
+			eax += edx;
+			esi += 2;
+		}
+		!
 	case2:
 		mov ecx, [ebp+8]
 		L12:
@@ -256,6 +299,14 @@ calcRowSum PROC
 			loop L12
 			mov [ebp+24], eax	;set eax to where ebp point at
 			jmp out1
+		comment!
+		for(int i = 0; i<= ecx; i++)
+		{
+			edx = [ebx+esi];
+			eax += edx;
+			esi += 4;
+		}
+		!
 	case3:
 		mov ecx, [ebp+8]
 		L13:
@@ -274,10 +325,8 @@ calcRowSum PROC
 	pop ebx
 	pop eax
 	pop ebp
-	ret 16
+	ret 16			;pop all variables out of stack
 calcRowSum ENDP 
-
-
 end main
 
 
@@ -303,12 +352,4 @@ Press any key to continue . . .
 
 
 
-	mov ecx, ArrayElement
-		mov esi, offset arrayB
-		l4:
-			movzx eax, BYTE ptr [esi]
-			call writeDec
-			add esi, TYPE arrayB
-			call Crlf
-			Loop l4
 !
