@@ -275,13 +275,13 @@ calcRowSum PROC
 			esi++;
 		}
 		!
-		L11:
+		L11:					;loop to calculate sum of arrayrow selected
 			movzx edx, BYTE PTR [ebx + esi] ;set edx = variable in array
 			add eax, edx		;add variable in array to eax
 			inc esi				;increate esi by array's size
 			loop L11			;loop set up
 			mov [ebp+24], eax	;set eax to where ebp point at
-			jmp out1
+			jmp out1			;jump to out1 label
 			comment!
 		for(int i = 0; i<= ecx; i++)
 		{
@@ -291,14 +291,14 @@ calcRowSum PROC
 		}
 		!
 	case2:
-		mov ecx, [ebp+8]
-		L12:
-			movzx edx, WORD PTR [ebx + esi] 
-			add eax, edx
-			add esi, 2
-			loop L12
+		mov ecx, [ebp+8]		;set loop counter
+		L12:					;loop to calculate sum of arrayrow selecred
+			movzx edx, WORD PTR [ebx + esi]		;make edx = variable in array
+			add eax, edx						;add variable in array to eax
+			add esi, 2							;move esi to the next variavle
+			loop L12							;loop set up
 			mov [ebp+24], eax	;set eax to where ebp point at
-			jmp out1
+			jmp out1							;jump to out1 label
 		comment!
 		for(int i = 0; i<= ecx; i++)
 		{
@@ -308,25 +308,25 @@ calcRowSum PROC
 		}
 		!
 	case3:
-		mov ecx, [ebp+8]
-		L13:
-			mov edx, [ebx + esi] 
-			add eax, edx
-			add esi, 4
-			loop L13
-			mov [ebp+24], eax	;set eax to where ebp point at
-			jmp out1
-	out1:
+		mov ecx, [ebp+8]	;set loop counter
+		L13:					;loop to calculate sum of arrayrow selecred
+			mov edx, [ebx + esi]			;make edx = variable in array
+			add eax, edx					;add variable in array to eax
+			add esi, 4						;move esi to the next variavle
+			loop L13						;loop set up
+			mov [ebp+24], eax				;set eax to where ebp point at
+			jmp out1						;jump to out1 label
+	out1:									;out1 label
 	
-	pop edi 
-	pop esi 
-	pop edx
-	pop ecx
-	pop ebx
-	pop eax
-	pop ebp
-	ret 16			;pop all variables out of stack
-calcRowSum ENDP 
+	pop edi				;pop variable out of stack, to edi
+	pop esi				;pop variable out of stack, to esi
+	pop edx				;pop variable out of stack, to edx
+	pop ecx				;pop variable out of stack, to ecx
+	pop ebx				;pop variable out of stack, to ebx
+	pop eax				;pop variable out of stack, to eax
+	pop ebp				;pop variable out of stack, to ebp
+	ret 16				;pop all variables out of stack, (16+4)/4 = 5 spots 
+calcRowSum ENDP			;end procedure
 end main
 
 
