@@ -60,6 +60,19 @@ mov edx, offset string1				;move affress string1 into edx
 call writeString					;call string1
 call readDec						;read input (keep how many elements)
 mov ArrayElement, eax				;put input into ArrayElement
+
+
+;--------------------------------------------------------------
+
+
+
+
+;----------------------------------------------------------
+
+
+
+
+
 cmp eax, 1							;compare eax with 1
 jb else1							;jump if below to else1 
 cmp eax, 40							;compare input with 40
@@ -154,16 +167,18 @@ call readInt						;read user input
 mov ArrayRowIndex, eax				;keep input in ArrayRowIndex
 
 
-;int calcRowSum ( int *array, int rowSize, int type, int rowIndex);
 
 
-push ArrayRowIndex
-push ArrayType
-push ArrayRow
-call calcRowSum
-pop ebx
-pop eax
-call writeHex
+push ArrayRowIndex				;push rowindex in the stack
+push ArrayType					;push value arraytype in the stack
+push ArrayRow					;push value arrayrow in the stack
+;int calcRowSum ( int *array, int rowSize, int type, int rowIndex)
+call calcRowSum					;call the function
+pop eax							;pop value in stack to eax
+mov edx, offset string9			;set string9 to edx
+call writeString				;call string
+call writeHex					;call eax 
+call Crlf						;go down one line
 
 
 
@@ -178,11 +193,16 @@ exit
 main endp
 
 
-
+;----------------------------------------------------------------------------
 ;calculates the sum of one row in the two-dimensional array of bytes, words,
 ;or doublewords and returns it to main proc.
 ;int calcRowSum ( int *array, int rowSize, int type, int rowIndex);
 ;For the parameters and the return value use the stack.
+;receice: EBX = table offset, EAX = row index
+;ECX = row size, in bytes. 
+;Returns: EAX holds the sum 
+;----------------------------------------------------------------------------
+
 calcRowSum PROC
 	push ebp 
 	mov ebp, esp
@@ -254,7 +274,7 @@ calcRowSum PROC
 	pop ebx
 	pop eax
 	pop ebp
-	ret 12 
+	ret 16
 calcRowSum ENDP 
 
 
